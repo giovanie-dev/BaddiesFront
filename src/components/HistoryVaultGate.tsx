@@ -37,8 +37,16 @@ export default function HistoryVaultGate({ children, showStatus = true }: { chil
         <>
             <details className="history-vault-panel">
                 <summary className="history-vault-summary">
-                    {unlocked ? <ShieldCheck aria-hidden="true" /> : <LockKeyhole aria-hidden="true" />}
-                    <span>{unlocked ? "Historique déverrouillé" : status === "legacy" ? "Protège ton ancien historique" : status === "empty" ? "Protection de l’historique" : "Historique verrouillé"}</span>
+                    {unlocked ? 
+                    <ShieldCheck aria-hidden="true" /> 
+                    : <LockKeyhole aria-hidden="true" />
+                    }
+                    <span>{unlocked ?
+                     "Historique déverrouillé" 
+                     : status === "legacy" 
+                     ? "Protège ton ancien historique" 
+                     : status === "empty" ? "Protection de l’historique" 
+                     : "Historique verrouillé"}</span>
                     <ChevronDown className="history-vault-chevron" aria-hidden="true" />
                 </summary>
                 <div className="history-vault-content">

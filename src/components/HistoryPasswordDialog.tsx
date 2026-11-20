@@ -58,10 +58,13 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
   const downloadCode = () => {
     if (!prepared) return;
     const text = `Code de récupération de l’historique local BADDIES\n\n${prepared.code}\n\nÀ conserver séparément, dans un endroit sûr.\nCe code permet de remplacer le mot de passe local. Il ne restaure pas un historique effacé du navigateur.\n`;
+
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
     const link = document.createElement("a");
+
     link.href = url; link.download = "BADDIES-code-recuperation.txt";
     document.body.append(link); link.click(); link.remove();
+    
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setCopyMessage("Conserve le fichier dans un endroit sûr, séparément de ton historique.");
   };
