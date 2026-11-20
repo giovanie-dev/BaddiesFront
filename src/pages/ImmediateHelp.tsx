@@ -28,28 +28,28 @@ export default function ImmediateHelp() {
                 <header className="immediate-help-intro">
                     <HeartHandshake size={32} aria-hidden="true" />
 
-                    <h1>Tu as mal ? Baddies est là pour t'aider.</h1>
+                    <h1>Vous avez mal ? BADDIES est là pour vous aider.</h1>
 
                     <p>
-                        Voici quelques gestes simples que tu peux essayer
-                        pour soulager tes douleurs menstruelles.
+                        Voici quelques gestes simples que vous pouvez essayer
+                        pour soulager vos douleurs menstruelles.
                     </p>
                 </header>
 
                 <section className="immediate-help-tips" aria-labelledby="immediate-help-tips-title">
                     <h2 id="immediate-help-tips-title">
-                        Ce que tu peux faire maintenant
+                        Ce que vous pouvez faire maintenant
                     </h2>
 
                     <article className="immediate-help-card">
                         <div className="immediateDiv">
-                            <h3>Essaie la chaleur</h3>
+                            <h3>Essayez la chaleur</h3>
                             <div className="card">
                                 <img src={chaleur} alt="solution chaleur" />
                                 <p>
-                                    Pose une bouillotte tiède enveloppée dans un tissu
+                                    Posez une bouillotte tiède enveloppée dans un tissu
                                     sur le bas du ventre ou du dos.
-                                    Ne la pose jamais directement sur la peau.
+                                    Ne la posez jamais directement sur la peau.
                                 </p>
                             </div>
 
@@ -59,13 +59,13 @@ export default function ImmediateHelp() {
                     <article className="immediate-help-card">
 
                         <div className="immediateDiv">
-                            <h3>Trouve une position confortable</h3>
+                            <h3>Trouvez une position confortable</h3>
                             <div className="card">
                                 <img src={repos} alt="solution repos" />
                                 <p>
-                                    Allonge-toi ou assieds-toi dans une position
-                                    agréable. Tu peux aussi marcher doucement
-                                    si cela te soulage.
+                                    Allongez-vous ou asseyez-vous dans une position
+                                    agréable. Vous pouvez aussi marcher doucement
+                                    si cela vous soulage.
                                 </p>
                             </div>
                         </div>
@@ -73,12 +73,12 @@ export default function ImmediateHelp() {
 
                     <article className="immediate-help-card">
                         <div className="immediateDiv">
-                            <h3>Prends soin de toi</h3>
+                            <h3>Prenez soin de vous</h3>
                             <div className="card">
                                 <img src={hydratation} alt="solution hydratation" />
                                 <p>
-                                    Bois selon ta soif, repose-toi si tu en ressens
-                                    le besoin et prends le temps de respirer calmement.
+                                    Buvez selon votre soif, reposez-vous si vous en ressentez
+                                    le besoin et prenez le temps de respirer calmement.
                                 </p>
                             </div>
 
@@ -94,20 +94,20 @@ export default function ImmediateHelp() {
                     </h2>
 
                     <p>
-                        Si ta douleur est très forte, soudaine ou inhabituelle,
-                        si tu fais un malaise, as de la fièvre, vomis beaucoup
-                        ou présentes des saignements très abondants,
-                        demande rapidement une aide médicale.
+                        Si votre douleur est très forte, soudaine ou inhabituelle,
+                        si vous faites un malaise, avez de la fièvre, vomissez beaucoup
+                        ou présentez des saignements très abondants,
+                        demandez rapidement une aide médicale.
                     </p>
 
                     {country === "France" ? (
                         <p>
-                            En cas d'urgence médicale en France, appelle le 15 ou le 112.
+                            En cas d'urgence médicale en France, appelez le 15 ou le 112.
                         </p>
                     ) : (
                         <p>
-                            En cas d'urgence à Madagascar, contacte les services
-                            d'urgence locaux ou rends-toi au centre de santé le plus proche.
+                            En cas d'urgence à Madagascar, contactez les services
+                            d'urgence locaux ou rendez-vous au centre de santé le plus proche.
                         </p>
                     )}
 
@@ -118,10 +118,10 @@ export default function ImmediateHelp() {
                 </section>
 
                 <section className="immediate-help-support">
-                    <h2>Tu n'as pas à gérer ça toute seule</h2>
+                    <h2>Vous n’avez pas à gérer cela toute seule</h2>
 
                     <p>
-                        Tu peux en parler à un adulte de confiance,
+                        Vous pouvez en parler à un adulte de confiance,
                         à l'infirmière scolaire ou à un professionnel
                         de santé.
                     </p>

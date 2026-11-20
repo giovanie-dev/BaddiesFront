@@ -276,7 +276,7 @@ export default function EditProfile() {
             {message && <p role="status">{message}</p>}
           </>
         ) : (
-          <p>Connecte-toi pour modifier ton profil.</p>
+          <p>Connectez-vous pour modifier votre profil.</p>
         )}
 
       </main>

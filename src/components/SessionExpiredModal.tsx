@@ -51,9 +51,9 @@ export default function SessionExpiredModal() {
                 </h2>
 
                 <p id="session-description">
-                    Ta session a expiré.
-                    Reconnecte-toi pour accéder
-                    à ton compte BADDIES.
+                    Votre session a expiré.
+                    Reconnectez-vous pour accéder
+                    à votre compte BADDIES.
                 </p>
 
                 <div className="session-actions">

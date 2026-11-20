@@ -27,7 +27,7 @@ export async function encryptData(
     throw new Error("Le chiffrement nécessite HTTPS ou localhost.");
   }
   if (password.length < 12) {
-    throw new Error("Choisis un mot de passe local d’au moins 12 caractères.");
+    throw new Error("Choisissez un mot de passe local d’au moins 12 caractères.");
   }
 
   const json = JSON.stringify(data);
@@ -74,7 +74,7 @@ function fromBase64(text: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(atob(text), character => character.charCodeAt(0));
 }
 
-/** Retrouve les données JSON avec le mot de passe utilisé au chiffrement. */
+/** Retrouvez les données JSON avec le mot de passe utilisé au chiffrement. */
 export async function decryptData(
   data: EncryptedData,
   password: string

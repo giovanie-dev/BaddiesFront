@@ -108,7 +108,7 @@ export function isHistoryUnlocked(): boolean {
 }
 
 export class HistoryLockedError extends Error {
-  constructor() { super("Déverrouille ton historique avec ton mot de passe local."); }
+  constructor() { super("Déverrouillez votre historique avec votre mot de passe local."); }
 }
 
 function checkSession() {
@@ -333,7 +333,7 @@ export function createHistoryVault(password: string): Promise<PreparedHistoryRec
   const owner = currentOwner();
   return exclusive(async () => {
     if (epoch !== generation || owner !== currentOwner()) throw new HistoryLockedError();
-    if (await readVault()) throw new Error("Une protection existe déjà. Utilise Déverrouiller.");
+    if (await readVault()) throw new Error("Une protection existe déjà. Utilisez Déverrouiller.");
     const legacy = await legacySnapshot();
     const secret = randomSecret();
     const code = recoveryCode();
@@ -405,7 +405,7 @@ export function recoverHistoryVault(code: string, newPassword: string): Promise<
   const owner = currentOwner();
   return exclusive(async () => {
     if (epoch !== generation || owner !== currentOwner()) throw new HistoryLockedError();
-    if (newPassword.length < 12) throw new Error("Choisis un nouveau mot de passe local d’au moins 12 caractères.");
+    if (newPassword.length < 12) throw new Error("Choisissez un nouveau mot de passe local d’au moins 12 caractères.");
     const vault = await readVault();
     if (!vault) throw new Error("L’historique est absent de ce navigateur. Un code seul ne restaure pas des données effacées.");
     const keys = protectedKeys(vault);

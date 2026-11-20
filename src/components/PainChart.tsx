@@ -12,7 +12,7 @@ export type ChartEvaluation = {
 
 export function PainChart({ evaluations }: { evaluations: ChartEvaluation[] }) {
     if (!evaluations.length) {
-        return <p>Aucune évaluation disponible pour afficher ton évolution.</p>;
+        return <p>Aucune évaluation disponible pour afficher votre évolution.</p>;
     }
 
     return (

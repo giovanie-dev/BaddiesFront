@@ -44,7 +44,7 @@ export default function HistoryVaultGate({ children, showStatus = true }: { chil
                     <span>{unlocked ?
                      "Historique déverrouillé" 
                      : status === "legacy" 
-                     ? "Protège ton ancien historique" 
+                     ? "Protégez votre ancien historique"
                      : status === "empty" ? "Protection de l’historique" 
                      : "Historique verrouillé"}</span>
                     <ChevronDown className="history-vault-chevron" aria-hidden="true" />
@@ -52,7 +52,7 @@ export default function HistoryVaultGate({ children, showStatus = true }: { chil
                 <div className="history-vault-content">
                 <div className="history-vault-header">
                     <div className="history-vault-copy">
-                        <p>{unlocked ? "Chiffrement local. Verrouillage automatique après 10 minutes d’inactivité." : status === "legacy" ? "Choisis un mot de passe local pour chiffrer les évaluations déjà enregistrées sans les perdre." : status === "empty" ? "Un mot de passe local protégera tes évaluations dès leur premier enregistrement." : "Saisis ton mot de passe local pour consulter tes évaluations."}</p>
+                        <p>{unlocked ? "Chiffrement local. Verrouillage automatique après 10 minutes d’inactivité." : status === "legacy" ? "Choisissez un mot de passe local pour chiffrer les évaluations déjà enregistrées sans les perdre." : status === "empty" ? "Un mot de passe local protégera vos évaluations dès leur premier enregistrement." : "Saisissez votre mot de passe local pour consulter vos évaluations."}</p>
                     </div>
                     <button type="button" className="history-vault-main-action" disabled={busy} onClick={unlocked ? lockHistory : () => open()}>
                         {unlocked ? "Verrouiller" : status === "locked" ? "Déverrouiller mon historique" : "Protéger mon historique"}
@@ -63,7 +63,7 @@ export default function HistoryVaultGate({ children, showStatus = true }: { chil
                     <div className="history-vault-recovery">
                         <p>
                             <strong>{recoveryAvailable ? "Récupération activée" : "Récupération à activer"}</strong>
-                            <span>{recoveryAvailable ? "Conserve ton code dans un endroit sûr, séparément de ton historique." : "Crée ton code pour retrouver l’accès si tu oublies ton mot de passe local."}</span>
+                            <span>{recoveryAvailable ? "Conservez votre code dans un endroit sûr, séparément de votre historique." : "Créez votre code pour retrouver l’accès si vous oubliez votre mot de passe local."}</span>
                         </p>
                         <button type="button" disabled={busy} onClick={() => open(true)}>
                             {recoveryAvailable ? "Renouveler mon code de récupération" : "Créer mon code de récupération"}

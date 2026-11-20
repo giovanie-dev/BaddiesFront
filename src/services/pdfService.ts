@@ -198,7 +198,7 @@ export function downloadEvaluationPDF(evaluation: Evaluation, solutions: Solutio
         pdf.text("Solutions proposées", margin, y);
         y += 7;
         textStyle(9, colors.gray);
-        pdf.text(`${solutions.length} geste(s) adapté(s) à ton évaluation`, margin, y);
+        pdf.text(`${solutions.length} geste(s) adapté(s) à votre évaluation`, margin, y);
         y += 12;
 
         let number = 1;

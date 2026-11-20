@@ -134,7 +134,7 @@
       }
     ],
     "impact_quotidien": {
-      "question": "Quel est l'impact de ta douleur sur ta journée ?",
+      "question": "Quel est l'impact de votre douleur sur votre journée ?",
       "options": [
         {
           "id": "aucun",

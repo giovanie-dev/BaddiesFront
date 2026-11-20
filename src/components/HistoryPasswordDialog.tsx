@@ -24,7 +24,7 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
     event.preventDefault();
     if (busy) return;
     setError("");
-    if (prepared && !savedCode) { setError("Conserve ton code avant de confirmer son activation."); return; }
+    if (prepared && !savedCode) { setError("Conservez votre code avant de confirmer son activation."); return; }
     if (!prepared && newPassword && password !== confirmation) { setError("Les deux mots de passe sont différents."); return; }
     setBusy(true);
     try {
@@ -52,8 +52,8 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
 
   const copyCode = async () => {
     if (!prepared) return;
-    try { await navigator.clipboard.writeText(prepared.code); setCopyMessage("Code copié. Conserve-le dans un endroit sûr."); }
-    catch { setCopyMessage("Copie le code affiché ou utilise le téléchargement."); }
+    try { await navigator.clipboard.writeText(prepared.code); setCopyMessage("Code copié. Conservez-le dans un endroit sûr."); }
+    catch { setCopyMessage("Copiez le code affiché ou utilisez le téléchargement."); }
   };
   const downloadCode = () => {
     if (!prepared) return;
@@ -66,13 +66,13 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
     document.body.append(link); link.click(); link.remove();
     
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setCopyMessage("Conserve le fichier dans un endroit sûr, séparément de ton historique.");
+    setCopyMessage("Conservez le fichier dans un endroit sûr, séparément de votre historique.");
   };
   const switchForgotten = (value: boolean) => {
     setForgotten(value); setPassword(""); setConfirmation(""); setRecoveryInput(""); setError(""); setShow(false);
   };
 
-  const title = prepared ? "Conserve ton code de récupération" : forgotten ? "Récupérer mon historique" : generating ? "Code de récupération" : creating ? "Protéger mon historique" : "Déverrouiller mon historique";
+  const title = prepared ? "Conservez votre code de récupération" : forgotten ? "Récupérer mon historique" : generating ? "Code de récupération" : creating ? "Protéger mon historique" : "Déverrouiller mon historique";
   return <dialog ref={dialog} className="history-password-dialog" aria-labelledby="history-password-title" aria-describedby="history-password-description" aria-busy={busy}
     onClick={event => {
       if (busy || event.target !== event.currentTarget) return;
@@ -83,17 +83,17 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
     onCancel={event => { event.preventDefault(); if (!busy) finishHistoryAccess(true); }}>
     <form onSubmit={submit}>
       <h2 id="history-password-title">{title}</h2>
-      <p id="history-password-description">{prepared ? "Ce code permet de retrouver l’accès si tu oublies ton mot de passe local.  Conserve-le séparément." : forgotten ? "Saisis le code conservé lors de l’activation de la récupération." : generating ? "Un nouveau code sera proposé. Il remplacera le précédent uniquement lorsque tu confirmeras l’avoir conservé. Ton mot de passe local et tes évaluations seront conservés." : creating ? "Choisis un mot de passe local distinct de celui du compte BADDIES. ." : "Utilise le mot de passe local choisi pour cet historique"}</p>
+      <p id="history-password-description">{prepared ? "Ce code permet de retrouver l’accès si vous oubliez votre mot de passe local.  Conservez-le séparément." : forgotten ? "Saisissez le code conservé lors de l’activation de la récupération." : generating ? "Un nouveau code sera proposé. Il remplacera le précédent uniquement lorsque vous confirmerez l’avoir conservé. Votre mot de passe local et vos évaluations seront conservés." : creating ? "Choisissez un mot de passe local distinct de celui du compte BADDIES." : "Utilisez le mot de passe local choisi pour cet historique"}</p>
 
       {prepared ? <>
-        <label htmlFor="history-recovery-output">Ton code de récupération</label>
+        <label htmlFor="history-recovery-output">Votre code de récupération</label>
         <textarea id="history-recovery-output" className="history-recovery-code" value={prepared.code} readOnly rows={4} spellCheck={false} autoComplete="off" />
         <div className="history-password-actions">
           <button type="button" onClick={copyCode} disabled={busy}>Copier le code</button>
           <button type="button" onClick={downloadCode} disabled={busy}>Télécharger le code</button>
         </div>
         {copyMessage && <p role="status">{copyMessage}</p>}
-        {/* <p className="history-password-warning">Toute personne possédant ce code et ton historique chiffré peut retrouver l’accès. Le code seul ne récupère pas les données effacées du navigateur.</p> */}
+        {/* <p className="history-password-warning">Toute personne possédant ce code et votre historique chiffré peut retrouver l’accès. Le code seul ne récupère pas les données effacées du navigateur.</p> */}
         <label className="history-checkbox"><input type="checkbox" checked={savedCode} onChange={event => setSavedCode(event.target.checked)} required disabled={busy} />J’ai conservé mon code de récupération.</label>
       </> : <>
 
@@ -119,10 +119,10 @@ function PasswordForm({ mode }: HistoryAccessRequest) {
         {!creating && !generating && <button type="button" className="history-forgot-password" disabled={busy} onClick={() => switchForgotten(!forgotten)}>
           {forgotten ? "Revenir au déverrouillage" : "Mot de passe local oublié ?"}
         </button>}
-        <p className="history-password-warning">{forgotten ? "Si aucun code n’a été activé auparavant, le mot de passe local reste nécessaire. Sans les deux, l’historique est inaccessible." : "La réinitialisation du compte ne récupère pas l’historique local. Sans ton mot de passe ni ton code de récupération, l’accès est perdu."}</p>
+        <p className="history-password-warning">{forgotten ? "Si aucun code n’a été activé auparavant, le mot de passe local reste nécessaire. Sans les deux, l’historique est inaccessible." : "La réinitialisation du compte ne récupère pas l’historique local. Sans votre mot de passe ni votre code de récupération, l’accès est perdu."}</p>
       </>}
       {error && <p role="alert" className="history-password-error">{error}</p>}
-      <p role="status" aria-live="polite">{busy ? "Protection de l’historique en cours. Garde cet onglet ouvert…" : ""}</p>
+      <p role="status" aria-live="polite">{busy ? "Protection de l’historique en cours. Gardez cet onglet ouvert…" : ""}</p>
       <div className="history-password-actions">
         <button type="button" disabled={busy} onClick={() => finishHistoryAccess(true)}>Annuler</button>
         <button type="submit" disabled={busy}>{prepared ? "J’ai conservé mon code, activer" : forgotten ? "Récupérer et changer le mot de passe" : generating ? "Générer un nouveau code" : creating ? "Continuer" : "Déverrouiller"}</button>

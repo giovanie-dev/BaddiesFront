@@ -112,7 +112,7 @@ export default function Home() {
               <h2>Besoin d'aide tout de suite ?</h2>
 
               <p>
-                Découvre des premiers gestes pour soulager tes douleurs
+                Découvrez des premiers gestes pour soulager vos douleurs
                 menstruelles, sans compte ni évaluation.
               </p>
 
@@ -130,7 +130,7 @@ export default function Home() {
           <section className="historyHome" aria-labelledby="history-title">
             <div className="historyHome-header">
               <h2 id="history-title">Mes évaluations</h2>
-              <p>Retrouve tes évaluations enregistrées sur cet appareil. Elles ne sont pas synchronisées avec ton compte.</p>
+              <p>Retrouvez vos évaluations enregistrées sur cet appareil. Elles ne sont pas synchronisées avec votre compte.</p>
             </div>
 
             {loading ? (
@@ -139,7 +139,7 @@ export default function Home() {
               </p>
             ) : historyError ? (
               <p role="alert">
-                Impossible de charger tes évaluations pour le moment.
+                Impossible de charger vos évaluations pour le moment.
               </p>
             ) : hasHistory ? (
               <>
@@ -156,7 +156,7 @@ export default function Home() {
                     </strong>
 
                     <p>
-                      Consulte tes précédentes évaluations
+                      Consultez vos précédentes évaluations
                       et les gestes associés.
                     </p>
                   </div>
