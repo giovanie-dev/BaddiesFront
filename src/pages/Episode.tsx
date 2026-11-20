@@ -1,15 +1,14 @@
+import db from "../data/db.json";
+import { getIntensity, getPainLevel } from "../utils/trackingUtils";
+import HistoryVaultGate from "../components/HistoryVaultGate";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Navbar from "../components/Navbar";
-import type { HistoryEvaluation } from "../services/localStorageService";
-import {
-  getHistoryById,
-  deleteHistory
-} from "../services/historyService";
+import type { HistoryEvaluation } from "../services/indexedDbService";
+import { getEvaluationById, deleteEvaluation } from "../services/indexedDbService";
 
 import "../styles/pages/episode.scss";
-import db from "../data/db.json";
 
 type DeleteProps = {
   onAccept: () => void;
@@ -21,7 +20,7 @@ function Delete({ onAccept, onRefuse }: DeleteProps) {
 
 
   return (
-    <div id="delete-overlay">
+    <div id="delete-overlay" onClick={event => { if (event.target === event.currentTarget) onRefuse(); }}>
       <div className="delete-card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
         <h2 id="delete-title">Supprimer l'épisode ?</h2>
 
@@ -44,6 +43,10 @@ function Delete({ onAccept, onRefuse }: DeleteProps) {
 }
 
 export default function Episode() {
+  return <><Navbar /><HistoryVaultGate showStatus={false}><EpisodeContent /></HistoryVaultGate></>;
+}
+
+function EpisodeContent() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -52,7 +55,6 @@ export default function Episode() {
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
 
-  const isConnected = Boolean(localStorage.getItem("token"));
   const [showDelete, setShowDelete] = useState(false)
 
   useEffect(() => {
@@ -73,21 +75,7 @@ export default function Episode() {
 
         let data: HistoryEvaluation | null = null;
 
-        if (localStorage.getItem("token")) {
-          data = await getHistoryById(id);
-        } else {
-          const historiqueStock =
-            localStorage.getItem("historique");
-
-          const historique: HistoryEvaluation[] = historiqueStock
-            ? JSON.parse(historiqueStock)
-            : [];
-
-          data =
-            historique.find(
-              (item) => String(item.id) === id
-            ) ?? null;
-        }
+        data = await getEvaluationById(id);
 
         if (active) {
           setEpisode(data);
@@ -113,7 +101,7 @@ export default function Episode() {
       active = false;
     };
 
-  }, [id, isConnected]);
+  }, [id]);
 
   const handleDelete = async () => {
     if (!id || !episode || deleting) return;
@@ -122,43 +110,24 @@ export default function Episode() {
     setError("");
 
     try {
-      if (isConnected) {
-        await deleteHistory(id);
-      } else {
-        const historiqueStock =
-          localStorage.getItem("historique");
-
-        const historique: HistoryEvaluation[] = historiqueStock
-          ? JSON.parse(historiqueStock)
-          : [];
-
-        const nouvelHistorique = historique.filter(
-          (item) => String(item.id) !== id
-        );
-
-        localStorage.setItem(
-          "historique",
-          JSON.stringify(nouvelHistorique)
-        );
-      }
+      await deleteEvaluation(id);
 
       navigate("/Suivi?tab=historique", { replace: true });
 
     } catch (err) {
       console.error("Erreur suppression :", err);
 
-      setError(
-        "Impossible de supprimer cet épisode. Réessaie."
-      );
+      setError(err instanceof Error ? err.message : "Impossible de supprimer cet épisode.");
     } finally {
       setDeleting(false);
     }
   };
 
+  const intensity = getIntensity(episode?.evaluation);
+  const level = getPainLevel(episode?.evaluation);
+
   return (
     <>
-      <Navbar />
-
       <main className="episode-page">
         <h1>Mon épisode</h1>
 
@@ -173,60 +142,18 @@ export default function Episode() {
         ) : (
           <>
             <section aria-labelledby="episode-details-title">
-              <h2 id="episode-details-title">
-                Détails de mon évaluation
-              </h2>
+              <h2 id="episode-details-title">Détails de mon évaluation</h2>
               <p>
-                {" "}
-                {db.evaluation_douleur.echelle_intensite.niveaux.find(
-                  (niveau) => niveau.id === episode.evaluation.intensiteNiveau
-                )?.label ?? (
-                    episode.evaluation.intensiteValeur != null
-                      ? "Intensité renseignée"
-                      : "Non renseignée"
-                  )}
-
-                {episode.evaluation.intensiteValeur != null && (
-                  <> ({episode.evaluation.intensiteValeur}/10)</>
+                {level?.label ?? (intensity ? "Intensité déclarée" : "Intensité non renseignée")}
+                {intensity && !intensity.estimated && (
+                  <> ({intensity.label})</>
                 )}
               </p>
-
-
-              <p>
-                Date :{" "}
-                {new Date(episode.date).toLocaleDateString(
-                  "fr-FR"
-                )}
-              </p>
-
-
-              <p>
-                Localisation :{" "}
-                {episode.evaluation.localisations.join(", ") ||
-                  "Non renseignée"}
-              </p>
-
-
-              <p>
-                Contexte :{" "}
-                {db.contextes.find(
-                  (contexte) =>
-                    contexte.id.replace(/\//g, "_") ===
-                    episode.evaluation.contextes?.replace(/\//g, "_")
-                )?.label ?? "Contexte non renseigné"}
-              </p>
-
-              <p>
-                Symptômes :{" "}
-                {episode.evaluation.symptomes.join(", ") ||
-                  "Aucun symptôme renseigné"}
-              </p>
-
-              <p>
-                Caractéristique :{" "}
-                {episode.evaluation.option ||
-                  "Non renseignée"}
-              </p>
+              <p>Date : {new Date(episode.date).toLocaleDateString("fr-FR")}</p>
+              <p>Localisation : {episode.evaluation?.localisations.join(", ") || "Non renseignée"}</p>
+              <p>Contexte : {db.contextes.find(item => item.id === episode.evaluation?.contextes)?.label ?? episode.evaluation?.contextes ?? "Non renseigné"}</p>
+              <p>Symptômes : {episode.evaluation?.symptomes.map(id => db.evaluation_douleur.symptomes.find(item => item.id === id)?.label ?? id).join(", ") || "aucun"}</p>
+              <p>Caractéristique : {episode.evaluation?.option || "Non renseignée"}</p>
             </section>
 
             <section aria-labelledby="solutions-title">
@@ -243,8 +170,7 @@ export default function Episode() {
                 ))
               ) : (
                 <p>
-                  Aucun geste conseillé enregistré pour
-                  cet épisode.
+                  Aucun conseil disponible sur cet appareil pour cet épisode.
                 </p>
               )}
             </section>

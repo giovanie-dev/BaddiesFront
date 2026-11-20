@@ -1,155 +1,120 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import HistoryVaultGate from "../components/HistoryVaultGate";
+import { HistoryList } from "../components/History";
 import { PainChart } from "../components/PainChart";
-import { History } from "../components/History";
-
-import type { HistoryEvaluation } from "../services/localStorageService";
-import { getHistory } from "../services/historyService";
-import db from "../data/db.json";
-
+import { useLocalHistory } from "../hooks/useLocalHistory";
+import { filterHistory, formatHistoryDate, getIntensity } from "../utils/trackingUtils";
 import "../styles/pages/tracking.scss";
 
 export default function Tracking() {
-    const [history, setHistory] = useState<HistoryEvaluation[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [params, setParams] = useSearchParams();
+    const tab = params.get("tab") === "historique" ? "historique" : "suivi";
 
-    const tab = searchParams.get("tab");
-    const isActive = tab === "historique" ? "historique" : "suivi";
-
-    const setIsActive = (onglet: "suivi" | "historique") => {
-        setSearchParams({ tab: onglet });
+    const setTab = (next: "suivi" | "historique") => {
+        setParams(current => {
+            const updated = new URLSearchParams(current);
+            updated.set("tab", next);
+            return updated;
+        });
     };
-
-    useEffect(() => {
-        let active = true;
-
-        const loadLocalHistory = (): HistoryEvaluation[] => {
-            try {
-                const historiqueStock = localStorage.getItem("historique");
-                return historiqueStock ? JSON.parse(historiqueStock) : [];
-            } catch (error) {
-                console.error("Erreur historique local :", error);
-                return [];
-            }
-        };
-
-        const loadHistory = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (token && navigator.onLine) {
-                    const data = await getHistory();
-                    if (active) setHistory(data);
-                } else {
-                    if (active) setHistory(loadLocalHistory());
-                }
-            } catch (error) {
-                console.error("Erreur suivi :", error);
-                if (active) setHistory(loadLocalHistory());
-            } finally {
-                if (active) setLoading(false);
-            }
-        };
-
-        loadHistory();
-        return () => { active = false; };
-    }, []);
-
-    // Repères visuels uniquement : les réponses enregistrées ne sont pas modifiées.
-    const niveauxQuestionnaire: Record<string, number> = Object.fromEntries(
-        db.evaluation_douleur.echelle_intensite.niveaux.map((niveau) => [
-            niveau.id,
-            Math.floor((niveau.min + niveau.max) / 2),
-        ])
-    );
-
-    const evaluations = [...history]
-        .filter((item) => !Number.isNaN(new Date(item.date).getTime()))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map((item) => {
-            const note = item.evaluation.intensiteValeur;
-            const noteValide = typeof note === "number" &&
-                Number.isFinite(note) && note >= 0 && note <= 10;
-
-            return {
-                date: new Date(item.date).toLocaleString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                }),
-                intensite: noteValide
-                    ? note
-                    : niveauxQuestionnaire[item.evaluation.intensiteNiveau ?? ""],
-                questionnaire: !noteValide,
-            };
-        })
-        .filter((item) => typeof item.intensite === "number");
 
     return (
         <>
             <Navbar />
-            <main className="tracking">
-                <h1>{isActive === "suivi" ? "Mon suivi" : "Mon historique"}</h1>
+            <main className="tracking tracking-simple">
+                <h1>{tab === "suivi" ? "Mon suivi" : "Mon historique"}</h1>
 
-                <nav className="btnSuivi" aria-label="Navigation du suivi">
-                    <div>
-                        <button type="button"
-                            onClick={() =>
-                                setIsActive("suivi")
-                            }
-                            className={`btn-fond ${isActive === "suivi"
-                                ? "active"
-                                : ""}`
-                            }
-                            aria-current={
-                                isActive === "suivi"
-                                    ? "page"
-                                    : undefined
-                            }
+                <HistoryVaultGate>
+                    <nav className="btnSuivi" aria-label="Navigation du suivi">
+                        <button
+                            type="button"
+                            className={`btn-fond${tab === "suivi" ? " active" : ""}`}
+                            aria-current={tab === "suivi" ? "page" : undefined}
+                            onClick={() => setTab("suivi")}
                         >
                             Suivi
                         </button>
-                    </div>
-                    <div>
-                        <button type="button"
-                            onClick={() =>
-                                setIsActive("historique")
-                            }
-                            className={`btn-fond ${isActive === "historique"
-                                ? "active"
-                                : ""}`
-                            }
-                            aria-current={
-                                isActive === "historique"
-                                    ? "page"
-                                    : undefined
-                            }
+                        <button
+                            type="button"
+                            className={`btn-fond${tab === "historique" ? " active" : ""}`}
+                            aria-current={tab === "historique" ? "page" : undefined}
+                            onClick={() => setTab("historique")}
                         >
                             Historique
                         </button>
-                    </div>
-                </nav>
+                    </nav>
 
-                {isActive === "suivi" && (
-                    <section aria-labelledby="evolution-title">
-                        <h2 id="evolution-title">Évolution de ma douleur</h2>
-                        {loading ? (
-                            <p role="status">Chargement des évaluations...</p>
-                        ) : (
-                            <PainChart evaluations={evaluations} />
-                        )}
-                    </section>
-                )}
-
-                {isActive === "historique" && (
-                    <section aria-label="Liste de mes évaluations">
-                        <History />
-                    </section>
-                )}
+                    <TrackingContent tab={tab} />
+                </HistoryVaultGate>
             </main>
+        </>
+    );
+}
+
+function TrackingContent({ tab }: { tab: "suivi" | "historique" }) {
+    const { history, loading, error, reload } = useLocalHistory();
+    const orderedHistory = filterHistory(history, "all");
+    const points = [...orderedHistory].reverse().flatMap(item => {
+        const intensity = getIntensity(item.evaluation);
+        if (!intensity) return [];
+
+        return [{
+            date: new Date(item.date).toLocaleString("fr-FR", {
+                day: "2-digit",
+                month: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            }),
+            fullDate: formatHistoryDate(item.date, true),
+            intensite: intensity.value,
+            intensityLabel: intensity.label,
+            painLabel: intensity.painLabel,
+            questionnaire: intensity.estimated
+        }];
+    });
+
+    if (loading) return <p role="status">Chargement des évaluations…</p>;
+
+    if (error) {
+        return (
+            <div className="tracking-simple-error" role="alert">
+                <p>{error}</p>
+                <button type="button" className="tracking-secondary" onClick={reload}>
+                    Réessayer
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            {tab === "suivi" && orderedHistory.length > 0 && (
+                <div className="tracking-overview" aria-label="Résumé de mes évaluations">
+                    <p><strong>{orderedHistory.length}</strong> évaluation{orderedHistory.length > 1 ? "s" : ""} enregistrée{orderedHistory.length > 1 ? "s" : ""}</p>
+                    <p>
+                        Dernière évaluation : <Link to={`/Historique/${encodeURIComponent(orderedHistory[0].id)}`}>
+                            <time dateTime={orderedHistory[0].date}>{formatHistoryDate(orderedHistory[0].date, true)}</time>
+                        </Link>
+                    </p>
+                </div>
+            )}
+
+            {tab === "suivi" && <section className="tracking-simple-chart" aria-labelledby="evolution-title">
+                <h2 id="evolution-title">Évolution de ma douleur</h2>
+                <PainChart evaluations={points} />
+            </section>}
+
+            {tab === "historique" && (
+                <section className="tracking-simple-history" aria-labelledby="history-list-title">
+                    <h2 id="history-list-title">Mon historique</h2>
+                    {orderedHistory.length ? (
+                        <HistoryList history={orderedHistory} />
+                    ) : (
+                        <p>Aucune évaluation enregistrée pour le moment.</p>
+                    )}
+                </section>
+            )}
         </>
     );
 }

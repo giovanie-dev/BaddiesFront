@@ -42,7 +42,7 @@ export function DataPrivacy({ onAccept, onRefuse }: dataPrivacyProps) {
 
     return (
         <>
-            <div id="protection">
+            <div id="protection" onClick={event => { if (event.target === event.currentTarget) handleRefuse(); }}>
                 <div className="protection-card">
 
                     <h1>Vos données, votre choix</h1>
@@ -54,7 +54,8 @@ export function DataPrivacy({ onAccept, onRefuse }: dataPrivacyProps) {
 
                     <p>
                         Si vous sauvegardez l'évaluation, elle est enregistrée sur
-                        cet appareil ou sur votre compte selon votre connexion.
+                        cet appareil, sous forme chiffrée, avec un mot de passe
+                        local distinct de celui du compte.
                     </p>
 
                     <p>
@@ -63,6 +64,12 @@ export function DataPrivacy({ onAccept, onRefuse }: dataPrivacyProps) {
                         Votre choix Analytics est indépendant.
                     </p>
 
+
+                    {/* <p>
+                        Conservez le code de récupération si vous l’activez : sans
++                        le mot de passe local ni ce code, l’historique ne peut plus
++                        être déverrouillé. Le code ne restaure pas des données effacées.
+                    </p> */}
 
                     <label className="consent-checkbox">
                         <input aria-invalid={Boolean(error)}

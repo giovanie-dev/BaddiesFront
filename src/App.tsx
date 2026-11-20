@@ -1,3 +1,6 @@
+import HistoryPasswordDialog from "./components/HistoryPasswordDialog";
+import HistoryVaultLifecycle from "./components/HistoryVaultLifecycle";
+import { HISTORY_VAULT_LOCKED } from "./services/indexedDbService";
 
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
@@ -6,6 +9,7 @@ import {
   Navigate,
   Outlet,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 
 import { EvaluationProvider } from "./evaluation/evaluationContext";
@@ -17,6 +21,8 @@ import CGU from "./pages/CGU";
 import { DataPrivacy } from "./components/Dataprivacy";
 import ImmediateHelp from "./pages/ImmediateHelp";
 import AnalyticsConsent from "./components/AnalyticsConsent.tsx";
+import LandingPage from "./pages/Landing.tsx";
+import PageLayout from "./components/PageLayout";
 
 import {
   ANALYTICS_CONSENT_CHANGED,
@@ -27,7 +33,7 @@ import {
 
 import { hasHealthConsent } from "./services/healthConsent.ts";
 
-// Pages principales
+// Pag
 const Country = lazy(() => import("./pages/Country"));
 const Home = lazy(() => import("./pages/Home"));
 const Age = lazy(() => import("./pages/AgeContent"));
@@ -225,17 +231,34 @@ function LoadingScreen() {
 }
 
 export default function App() {
+  const [vaultVersion, setVaultVersion] = useState(0);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const clearHistoryViews = () => {
+      // Retirer aussi les données déchiffrées déjà affichées et le questionnaire en mémoire.
+      setVaultVersion(value => value + 1);
+      navigate("/Home", { replace: true });
+    };
+    window.addEventListener(HISTORY_VAULT_LOCKED, clearHistoryViews);
+    return () => window.removeEventListener(HISTORY_VAULT_LOCKED, clearHistoryViews);
+  }, [navigate]);
   return (
-    <EvaluationProvider>
+    <>
+    <HistoryPasswordDialog />
+    <HistoryVaultLifecycle />
+    <EvaluationProvider key={vaultVersion}>
       <SessionExpiredModal />
 
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           {/* Première ouverture */}
-          <Route path="/" element={<StartRedirection />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/Commencer" element={<StartRedirection />} />
+          
           <Route path="/Country" element={<Country />} />
           <Route path="/AgeContent" element={<Age />} />
 
+          <Route element={<PageLayout />}>
           {/* Aide et informations accessibles à tous */}
           <Route path="/ImmediateHelp" element={<ImmediateHelp />} />
           <Route path="/emergencyContact" element={<Urgency />} />
@@ -288,6 +311,8 @@ export default function App() {
             </Route>
           </Route>
 
+          </Route>
+
           {/* Page inexistante */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -296,5 +321,6 @@ export default function App() {
       <ConsentManager />
       <AnalyticsTracker />
     </EvaluationProvider>
+    </>
   );
 }

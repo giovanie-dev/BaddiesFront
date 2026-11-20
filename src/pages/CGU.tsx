@@ -10,7 +10,7 @@ export default function CGU() {
       <main className="legal-page">
         <h1>CONDITIONS GÉNÉRALES D'UTILISATION</h1>
 
-        <p>Dernière mise à jour : <span className="date"> 04 Novembre 2026</span> </p>
+        <p>Dernière mise à jour : <span className="date"> 18 novembre 2026</span> </p>
 
         <h2>Article 1 — Objet</h2>
         <p>
@@ -62,7 +62,7 @@ export default function CGU() {
           progressive (PWA) sur les appareils compatibles.
           Certaines fonctionnalités restent accessibles hors connexion
           après un premier chargement des ressources nécessaires.
-          La connexion au compte, l'enregistrement distant et l'envoi
+          La connexion au compte et l'envoi
           d'e-mails nécessitent une connexion Internet.
         </p>
         <p>
@@ -116,8 +116,8 @@ export default function CGU() {
         </p>
         <p>
           BADDIES propose également la création d'un compte
-          utilisateur permettant d'accéder aux fonctionnalités
-          réservées aux personnes connectées.
+          utilisateur pour gérer son profil et sa connexion.Il peut être supprimé
+          depuis les paramètres, après confirmation du mot de passe du compte.
         </p>
         <p>
           Lors de l'inscription, l'utilisatrice renseigne
@@ -164,14 +164,27 @@ export default function CGU() {
           réponses fournies lors des évaluations.
         </p>
         <p>
-          Lors de l'enregistrement d'une évaluation, les données
-          peuvent être conservées dans le compte lorsque
-          l'utilisatrice est connectée et dispose d'une connexion
-          Internet. Sans compte, hors connexion ou en cas d'échec
-          de l'enregistrement distant, elles peuvent être conservées
-          localement dans le navigateur.
-          Les évaluations enregistrées localement ne sont pas
-          automatiquement synchronisées vers le compte.
+          Avec ou sans compte, la date, les réponses et les conseils d’une
+          évaluation sauvegardée restent dans IndexedDB sur cet appareil,
+          sous forme chiffrée. Cette version n’envoie pas l’historique à l’API
+          ou à Supabase. Le mot de passe local est distinct de celui du compte.
+          L’historique se verrouille notamment après 10 minutes d’inactivité ;
+          ce verrouillage ne supprime pas les données sauvegardées.
+        </p>
+        <p>
+          Un code de récupération préalablement activé et conservé permet
+          de remplacer un mot de passe local oublié. Sans ce mot de passe
+          ni ce code, l’accès est perdu. Le code téléchargé contient un secret
+          lisible, pas une copie de l’historique : il ne restaure pas les données
+          effacées. L’éditrice ne peut pas récupérer ces secrets à votre place.
+        </p>
+        <p>
+          Il n’y a pas de synchronisation entre appareils. Le navigateur peut
+          supprimer ses données ; leur effacement ou la perte de l’appareil
+          peut entraîner la perte de l’historique. Un PDF téléchargé ou un résumé
+          partagé reste une copie indépendante, qui n’est pas effacée lorsque
+          vous supprimez une évaluation dans l’application. Sur un appareil
+          partagé, utilisez des profils de navigateur distincts.
         </p>
         <p>
           Les informations relatives aux douleurs menstruelles

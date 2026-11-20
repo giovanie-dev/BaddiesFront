@@ -1,131 +1,52 @@
-
-import { useState, useEffect } from "react";
-import type { HistoryEvaluation } from "../services/localStorageService";
-import { useNavigate } from "react-router-dom";
-import { getHistory } from "../services/historyService";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
-import db from "../data/db.json";
-
+import Navbar from "./Navbar";
+import HistoryVaultGate from "./HistoryVaultGate";
+import { useLocalHistory } from "../hooks/useLocalHistory";
+import type { HistoryEvaluation } from "../services/indexedDbService";
+import { formatHistoryDate, getIntensity, getPainLevel } from "../utils/trackingUtils";
 import "../styles/pages/tracking.scss";
 
-
 export function History() {
+    return (
+        <>
+            <Navbar />
+            <main className="tracking tracking-simple">
+                <h1>Mon historique</h1>
+                <HistoryVaultGate>
+                    <LocalHistory />
+                </HistoryVaultGate>
+            </main>
+        </>
+    );
+}
 
-    const navigate = useNavigate();
+function LocalHistory() {
+    const { history, loading, error, reload } = useLocalHistory();
+    if (loading) return <p role="status">Chargement de l’historique…</p>;
+    if (error) return <div role="alert"><p>{error}</p><button type="button" onClick={reload}>Réessayer</button></div>;
+    return <HistoryList history={history} />;
+}
 
-    const [history, setHistory] = useState<HistoryEvaluation[]>([]);
-    const [filtre, setFiltre] = useState("recent");
-    const [loading, setLoading] = useState(true);
-
-
-    // Je cherche le texte du niveau de douleur.
-    function getIntensityLabel(id: string | null) {
-        for (const niveau of db.evaluation_douleur.echelle_intensite.niveaux) {
-            if (niveau.id === id) {
-                return niveau.label;
-            }
-        }
-
-        return "Intensité non renseignée";
-    }
-
-    const historyFiltree = [...history]
-        .filter((item) => {
-            if (filtre === "intense") {
-                return item.evaluation.intensiteNiveau === "intense";
-            }
-
-            if (filtre === "moderee") {
-                return item.evaluation.intensiteNiveau === "moderee";
-            }
-
-            if (filtre === "legere") {
-                return item.evaluation.intensiteNiveau === "legere";
-            }
-
-            return true;
+export function HistoryList({ history }: { history: HistoryEvaluation[] }) {
+    const [filter, setFilter] = useState("recent");
+    const filtered = [...history]
+        .filter(item => {
+            if (filter === "recent" || filter === "ancien") return true;
+            const level = getPainLevel(item.evaluation);
+            return level?.id.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === filter;
         })
-        .sort((a, b) => {
-            const datePainA = new Date(a.date).getTime();
-            const datePainB = new Date(b.date).getTime();
-
-            if (filtre === "ancien") {
-                return datePainA - datePainB;
-            }
-
-            return datePainB - datePainA;
-        });
-
-    useEffect(() => {
-        let active = true;
-
-        const getLocalHistory = (): HistoryEvaluation[] => {
-            try {
-                const historiqueStock = localStorage.getItem("historique");
-                return historiqueStock ? JSON.parse(historiqueStock) : [];
-            } catch (error) {
-                console.error("Erreur historique local :", error);
-                return [];
-            }
-        };
-
-        const loadHistory = async () => {
-            try {
-                const token = localStorage.getItem("token");
-
-                if (token && navigator.onLine) {
-                    const data = await getHistory();
-
-                    if (active) {
-                        setHistory(data);
-                    }
-                } else {
-                    if (active) {
-                        setHistory(getLocalHistory());
-                    }
-                }
-            } catch (error) {
-                console.error("Erreur historique :", error);
-
-                if (active) {
-                    setHistory(getLocalHistory());
-                }
-            } finally {
-                if (active) {
-                    setLoading(false);
-                }
-            }
-        };
-
-
-        loadHistory();
-
-        return () => {
-            active = false;
-        };
-
-
-    }, []);
-
-
-
+        .sort((a, b) => filter === "ancien"
+            ? Date.parse(a.date) - Date.parse(b.date)
+            : Date.parse(b.date) - Date.parse(a.date));
 
     return (
         <>
-            <h2>Mon historique</h2>
-
-
-
-            <section className="filtreArt" aria-labelledby="history-filter-title">
-
+            <section className="filtreArt" aria-label="Tri des évaluations">
                 <label htmlFor="history-filter">Trier les évaluations</label>
-
                 <div className="historyFilters">
-                    <select id="history-filter" value={filtre}
-                        onChange={(e) =>
-                            setFiltre(e.target.value)
-                        }
-                    >
+                    <select id="history-filter" value={filter} onChange={event => setFilter(event.target.value)}>
                         <option value="recent">Plus récentes</option>
                         <option value="ancien">Plus anciennes</option>
                         <option value="intense">Douleur intense</option>
@@ -133,52 +54,40 @@ export function History() {
                         <option value="legere">Douleur légère</option>
                     </select>
                 </div>
-
             </section>
 
-
-            {loading ? (
-                <p role="status">Chargement de l'historique...</p>
-            ) : history.length === 0 ? (
-                <p>
-                    Aucune évaluation actuellement.
-                    <span> Commencez une évaluation pour pouvoir l'enregistrer.</span>
-                </p>
-            ) : historyFiltree.length === 0 ? (
+            {!history.length ? (
+                <p>Aucune évaluation actuellement. Enregistre une évaluation pour la retrouver ici.</p>
+            ) : !filtered.length ? (
                 <p>Aucune évaluation ne correspond à ce filtre.</p>
             ) : (
                 <div className="historyList">
-                    {/* Je crée une carte pour chaque évaluation. */}
-                    {historyFiltree.map((item) => (
-                        <article key={item.id} className="historyArticle">
-                            <div className="historyContent">
-                                <div className="blocHistory">
-                                    <p className="date">{new Date(item.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                                    </p>
-                                    <p className="paraHistory">
-                                        {getIntensityLabel(item.evaluation.intensiteNiveau)}
-                                    </p>
+                    {filtered.map(item => {
+                        const intensity = getIntensity(item.evaluation);
+                        const level = getPainLevel(item.evaluation);
+                        return (
+                            <article key={item.id} className="historyArticle">
+                                <div className="historyContent">
+                                    <div className="blocHistory">
+                                        <p className="date"><time dateTime={item.date}>{formatHistoryDate(item.date)}</time></p>
+                                        <p className="paraHistory">{level?.label ?? "Intensité non renseignée"}</p>
+                                    </div>
+                                    <div className="zone">
+                                        <MapPin className="map" size={20} aria-hidden="true" />
+                                        <p>{item.evaluation?.localisations.join(", ") || "Non renseignée"}</p>
+                                    </div>
+                                    {intensity && !intensity.estimated && <p className="intensity">{intensity.label}</p>}
                                 </div>
-                                <div className="zone">
-                                    <MapPin className="map" aria-hidden="true" />
-                                    <p>{item.evaluation.localisations.join(", ") || "Non renseignée"}</p>
-                                </div>
-                                {item.evaluation.intensiteValeur != null && (
-                                    <p className="intensity">
-                                        {item.evaluation.intensiteValeur}/10
-                                    </p>
-                                )}
-                            </div>
-
-                            <button type="button" className="btnEpisode"
-                                onClick={() =>
-                                    navigate(`/Historique/${item.id}`)
-                                }
-                            >
-                                Voir l'épisode
-                            </button>
-                        </article>
-                    ))}
+                                <Link
+                                    className="btnEpisode"
+                                    to={`/Historique/${encodeURIComponent(item.id)}`}
+                                    aria-label={`Voir l’épisode du ${formatHistoryDate(item.date, true)}`}
+                                >
+                                    Voir l’épisode
+                                </Link>
+                            </article>
+                        );
+                    })}
                 </div>
             )}
         </>

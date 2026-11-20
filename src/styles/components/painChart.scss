@@ -28,3 +28,14 @@
     height: 330px;
   }
 }
+
+.pain-chart-figure { margin: 0; min-width: 0; }
+.pain-chart-tooltip { display: grid; gap: 6px; max-width: 240px; padding: 12px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-card); color: var(--color-text); font-family: var(--font-body); font-size: 13px; }
+.pain-chart-tooltip span { color: var(--color-accent); }
+.pain-chart-tooltip small, .pain-chart-figure figcaption { color: var(--color-text-muted); }
+.pain-chart-figure figcaption { font-size: 12px; line-height: 1.6; }
+.pain-chart-values { margin-top: 14px; font-size: 12px; }
+.pain-chart-values summary { cursor: pointer; color: var(--color-accent); }
+.pain-chart-values > div { overflow-x: auto; margin-top: 10px; }
+.pain-chart-values table { width: 100%; border-collapse: collapse; text-align: left; }
+.pain-chart-values th, .pain-chart-values td { padding: 8px; border-bottom: 1px solid var(--color-border); }

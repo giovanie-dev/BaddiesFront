@@ -19,7 +19,8 @@ export function EvaluationProvider({ children }: { children: React.ReactNode }) 
     const resetEvaluation = () => {
         setEvaluation(createInitialEvaluation());
     };
-
+    
+// donnera les valeurs réellement utilisées pendant le questionnaire
     return (
         <EvalContext.Provider value={{ evaluation, setEvaluation,resetEvaluation }}>
             {children}

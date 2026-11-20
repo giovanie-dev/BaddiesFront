@@ -46,17 +46,7 @@ export default function Login() {
             const country = localStorage.getItem("country");
             const hasCountry = country === "Mada" || country === "France";
 
-            // Proposer le transfert après la connexion si cet appareil contient des évaluations.
-            let hasLocalHistory = false;
-            try {
-                const history = JSON.parse(localStorage.getItem("historique") ?? "[]");
-                hasLocalHistory = Array.isArray(history) && history.length > 0;
-            } catch {
-                hasLocalHistory = false;
-            }
-            if (hasLocalHistory) sessionStorage.setItem("propose-history-sync", "true");
-
-            navigate(hasCountry ? (hasLocalHistory ? "/Home" : from) : "/Country", {
+            navigate(hasCountry ? from : "/Country", {
                 replace: true
             });
 

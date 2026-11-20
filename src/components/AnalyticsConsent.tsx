@@ -35,7 +35,7 @@ export default function AnalyticsConsent() {
   if (!visible) return null;
 
   return (
-    <section className="analytics-consent" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <section className="analytics-consent" onClick={event => { if (event.target === event.currentTarget) setVisible(false); }} role="dialog" aria-modal="true" aria-labelledby="consent-title">
       <div className="analytics-consent-content">
         <h2 id="consent-title">Vos données, vos choix</h2>
 
@@ -81,6 +81,12 @@ export default function AnalyticsConsent() {
         )}
 
         <p>
+          Les évaluations sauvegardées restent chiffrées sur cet appareil,
+          sans synchronisation avec le compte. Le mot de passe local et le
+          code de récupération sont distincts du mot de passe du compte.
+          Leur perte peut empêcher l’accès à l’historique.
+        </p>
+        <p>
           Les choix sont indépendants et facultatifs.
           Les premiers gestes et l'urgence restent accessibles.
         </p>
@@ -91,7 +97,7 @@ export default function AnalyticsConsent() {
 
         <div className="analytics-consent-actions">
           <button type="button" className="analytics-refuse" onClick={refuseAll}>
-            Tout refuser
+            Refuser ces choix
           </button>
 
           <button type="button" className="analytics-accept" onClick={saveChoices}>

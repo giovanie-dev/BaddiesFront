@@ -1,7 +1,7 @@
 
 import { createContext } from "react";
 
-// Les informations de l'évaluation
+// types réponses
 export type Evaluation = {
     intensiteNiveau: string | null;
     intensiteValeur: number | null;
@@ -11,8 +11,9 @@ export type Evaluation = {
     option: string | null;
 };
 
-// Ce que le contexte fournit aux composants
+// les elements partagés
 export type EvaluationContextType = {
+    // décrit ce qui partagé
     evaluation: Evaluation;
     setEvaluation: React.Dispatch<React.SetStateAction<Evaluation>>;
     resetEvaluation: () => void;

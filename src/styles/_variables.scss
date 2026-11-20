@@ -4,19 +4,24 @@
   // Palette existante
   --color-white: #FFFFFF;
   --color-black: #171317;
-  --color-bg: #FFFFFF;
+  --color-text: #171317;
+  --color-text-muted: #706970;
   --color-card: #FFFFFF;
   --color-card-soft: #FAF5F7;
   --color-fond: #D9D9D9;
   --color-fond-clair: #FAF8F9;
   --color-fond-page: #e9e0e4;
   --color-back: #f5e7e9;
-  --color-text: #171317;
-  --color-text-muted: #706970;
+   --color-bg: #FFFFFF;
   --color-ok: #2f8b35;
 
+  // LANDING PAGE
+  --color-landing-bg: #fff5f8;
+  --color-landing-halo: rgba(255, 108, 173, 0.24);
+  --color-landing: #A40149;
+
   --color-border: #EEE5E9;
-  --color-btn: #741D2D;
+   --color-btn: #741D2D;
   --color-accent: #741D2D;
   --color-pink: rgba(116, 29, 45, 0.16);
   --color-rec: rgba(217, 217, 217, 0.21);
@@ -82,9 +87,15 @@
   --color-success-bg: #f1f8f3;
 --color-success-text: #1f6b3a;
 --color-success-border: #c9e2d1;
+
+
+
+
+
 }
 
 // Tailles conservées pour les prochains ajustements.
 $font-size-logo: 410px;
 $breakpoint: 767px;
 $breakpoint-tablette: 1024px;
+

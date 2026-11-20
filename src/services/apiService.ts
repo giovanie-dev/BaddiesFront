@@ -1,3 +1,4 @@
+import { lockHistory } from "./indexedDbService";
 
 import {  SESSION_EXPIRED_MESSAGE,  notifySessionExpired  } from "./sessionService"
 
@@ -88,6 +89,7 @@ const saveTokens = (
 
 // Effacer la session locale
 const clearSession = (): void => {
+    lockHistory()
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
 }
@@ -217,20 +219,11 @@ export const fetchWithAuth = async (
 // SERVICES API
 export const apiService = {
 
-    // POSTS
-    async getPosts(signal: AbortSignal) {
-        const response = await fetch(
-            `${BASE_URL}/posts`,
-            { signal }
-        )
-
-        return readJson(response)
-    },
-
     // CONNEXION
     async login(
         email: string,
         password: string,
+        // signal d'annulation de requete
         signal: AbortSignal
     ): Promise<AuthResponse> {
         const response = await fetch(
@@ -257,6 +250,7 @@ export const apiService = {
             throw new Error('Réponse de connexion invalide.')
         }
 
+        lockHistory()
         saveTokens(data.accessToken, data.refreshToken)
 
         return data

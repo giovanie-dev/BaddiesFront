@@ -8,7 +8,7 @@ export default function Privacy() {
       <main className="legal-page">
         <h1>POLITIQUE DE CONFIDENTIALITÉ</h1>
 
-        <p>Dernière mise à jour : <span className="date">4 novembre 2026</span> </p>
+        <p>Dernière mise à jour : <span className="date">18 novembre 2026</span> </p>
 
         <p>
           La présente politique de confidentialité décrit la manière
@@ -41,8 +41,9 @@ export default function Privacy() {
         </p>
         <ul>
           <li>
-            Données de compte : pseudonyme, adresse e-mail et
-            informations nécessaires à l'authentification.
+            Données de compte : pseudonyme, adresse e-mail, éventuel avatar
+            et informations nécessaires à l’authentification. Le serveur conserve
+            une empreinte du mot de passe du compte, et non ce mot de passe en clair.
           </li>
           <li>
             Données d'évaluation : intensité des douleurs menstruelles,
@@ -50,7 +51,7 @@ export default function Privacy() {
             caractéristiques de la douleur.
           </li>
           <li>
-            Historique des évaluations enregistrées.
+            Historique des évaluations enregistré uniquement sur cet appareil.
           </li>
           <li>
             Préférences et choix : pays, tranche d'âge déclarée et
@@ -115,11 +116,11 @@ export default function Privacy() {
           l'article 6 du RGPD.
         </p>
         <p>
-          Les traitements liés à la gestion du compte peuvent
-          notamment être nécessaires à la fourniture du service.
-          Certains traitements de sécurité peuvent reposer
-          sur un intérêt légitime, sous réserve des conditions
-          applicables.
+          La création du compte, la connexion et la gestion du profil répondent
+          à votre demande de service et reposent sur l’exécution du contrat
+          (article 6, paragraphe 1, point b). La protection des comptes contre
+          les accès non autorisés répond à l’intérêt légitime de sécuriser
+          le service (article 6, paragraphe 1, point f).
         </p>
         <p>
           Le traitement des réponses à l'évaluation et des données
@@ -156,18 +157,17 @@ export default function Privacy() {
           enregistrées sur le compte.
         </p>
 
-        <h3>Compte et évaluations enregistrées en ligne</h3>
+        <h3>Données du compte</h3>
         <p>
-          Les informations de compte et les évaluations enregistrées
-          en ligne restent conservées tant qu'elles n'ont pas été
+          Les informations de compte restent conservées tant qu'elles n'ont pas été
           supprimées. La version actuelle ne prévoit pas de suppression
           automatique des comptes inactifs.
           Vous pouvez demander l'effacement de votre compte et des
           données associées au contact indiqué dans la section 9.
-          La suppression du compte n'est pas proposée par un bouton dédié.
+          Vous pouvez supprimer votre compte depuis les paramètres, après confirmation de votre mot de passe.
         </p>
         {/* À FINALISER AVANT PUBLICATION : définir et appliquer les durées
-          maximales des comptes et des évaluations, y compris en cas
+          maximales des comptes, y compris en cas
           d'inactivité. Le constat ci-dessus ne remplace pas cette règle. */}
 
         <h3>Authentification et réinitialisation du mot de passe</h3>
@@ -235,8 +235,7 @@ export default function Privacy() {
           </li>
           <li>
             <strong>Render :</strong> hébergement de l'API backend,
-            qui traite notamment l'authentification et les évaluations
-            transmises pour un enregistrement sur le compte.{' '}
+            qui traite l’authentification et la gestion du profil, sans recevoir l’historique des évaluations.{' '}
             <a href="https://render.com/privacy">
               Politique de confidentialité de Render
             </a>.
@@ -244,7 +243,7 @@ export default function Privacy() {
           <li>
             <strong>Supabase :</strong> hébergement de la base PostgreSQL
             contenant les données de compte, les éléments nécessaires
-            à l'authentification et les évaluations enregistrées en ligne.{' '}
+            à l’authentification. Aucune date d’évaluation, réponse ou solution n’y est envoyée par cette version.{' '}
             <a href="https://supabase.com/privacy">
               Politique de confidentialité de Supabase
             </a>.
@@ -300,44 +299,91 @@ export default function Privacy() {
         </p>
         <h2>7. Stockage des données et choix de consentement</h2>
 
-        <h3>Historique sur cet appareil</h3>
+        <h3>Évaluations et historique local chiffré</h3>
         <p>
-          Sans compte, lorsque vous enregistrez une évaluation, son contenu
-          et les conseils associés sont conservés dans le stockage local
-          du navigateur (localStorage). Cet historique n'est pas envoyé
-          à la base de données du compte par cette action de sauvegarde locale.
+          Les réponses au questionnaire sont utilisées dans le navigateur pour
+          proposer des conseils. Lorsque vous sauvegardez une évaluation,
+          sa date, les réponses et les solutions associées sont enregistrées
+          dans IndexedDB, sur cet appareil. Avec ou sans compte, cette version
+          n’envoie aucune de ces données d’historique à l’API ou à Supabase.
         </p>
         <p>
-          Le stockage local peut persister après la fermeture du navigateur.
-          Sur un appareil partagé, d'autres personnes utilisant le même
-          profil de navigateur peuvent accéder aux informations qui y restent.
-          La suppression des données du site dans le navigateur efface les
-          informations locales, mais pas celles déjà enregistrées sur un compte.
-        </p>
-
-        <h3>Historique enregistré sur le compte</h3>
-        <p>
-          Lorsque vous êtes connectée et que vous enregistrez une évaluation
-          avec un accès réseau disponible, l'application transmet l'évaluation
-          et les conseils associés à l'API afin de les enregistrer dans
-          PostgreSQL et de permettre leur consultation depuis le compte.
+          L’historique sauvegardé est chiffré avec AES-GCM. Un mot de passe
+          local protège l’accès à sa clé de chiffrement. Il est distinct du
+          mot de passe du compte : changer ou réinitialiser le mot de passe
+          du compte ne déverrouille pas l’historique.
         </p>
         <p>
-          Si l'enregistrement sur le compte échoue, ou si vous utilisez le
-          parcours sans connexion réseau, l'application peut conserver
-          l'évaluation sur cet appareil et vous en informer. Cette sauvegarde
-          locale n'est pas automatiquement synchronisée vers le compte au
-          retour du réseau. Il faut distinguer les copies locales des
-          enregistrements distants pour les consulter ou les supprimer.
+          Pendant le déverrouillage, les données lisibles et la clé nécessaire
+          à leur utilisation sont présentes en mémoire. L’historique se verrouille
+          au rechargement de la page, à la déconnexion, au changement de compte
+          ou après 10 minutes d’inactivité. Vous pouvez aussi le verrouiller
+          immédiatement depuis la page Suivi. Le verrouillage n’efface pas
+          l’historique chiffré du navigateur.
         </p>
-
-        <h3>Préférences et session</h3>
+        <h3>Mot de passe local oublié et code de récupération</h3>
         <p>
-          Le navigateur conserve également des préférences, les choix de
-          consentement et, lors d'une connexion, des informations de profil
-          et des jetons de session. La déconnexion retire les informations
-          locales de session ; elle n'efface pas à elle seule l'historique
-          local, les préférences ou les épisodes enregistrés sur le compte.
+          Un code de récupération peut être activé après confirmation que vous
+          l’avez conservé. Il permet de définir un nouveau mot de passe local
+          pour un historique encore présent sur cet appareil. Le mot de passe
+          local, le code et la clé de l’historique ne sont pas envoyés au serveur.
+          BADDIES ne les conserve pas en clair dans son stockage persistant.
+        </p>
+        <p>
+          Le code copié ou téléchargé est un secret lisible : conservez-le dans
+          un endroit sûr, séparément de l’appareil si possible. Une personne
+          disposant du code et de votre historique chiffré peut le déverrouiller.
+          Ce fichier contient le code, pas vos évaluations : ce n’est pas une
+          sauvegarde de l’historique. Le code ne restaure pas des données effacées.
+        </p>
+        <p>
+          Sans mot de passe local ni code de récupération déjà activé et conservé,
+          BADDIES ne peut pas rétablir l’accès. Pour un ancien historique chiffré,
+          le code doit être activé après déverrouillage, avant un éventuel oubli.
+          Vous pouvez renouveler le code depuis la protection de l’historique ;
+          le remplacement ne s’applique qu’après confirmation de sa conservation.
+        </p>
+        <h3>Limites et anciens historiques</h3>
+        <p>
+          Les anciens historiques locaux en clair sont convertis lors de
+          l’activation réussie de la protection. Tant que cette étape n’est
+          pas terminée, les données d’origine restent présentes pour éviter
+          leur perte. Fermez les anciens onglets de BADDIES avant cette opération.
+        </p>
+        <p>
+          La protection porte sur un historique dans un profil de navigateur,
+          et non sur un coffre chiffré distinct pour chaque compte. Sur un
+          appareil partagé, utilisez des profils de navigateur séparés.
+          Le chiffrement ne protège pas une session déjà déverrouillée contre
+          une personne utilisant l’appareil ou un programme malveillant.
+        </p>
+        <h3>Absence de synchronisation et suppression</h3>
+        <p>
+          La connexion au compte ne transfère pas l’historique : un autre appareil
+          ne retrouve ni ses dates, ni ses réponses, ni ses conseils.
+          Effacer les données du site ou perdre l’appareil peut rendre cet
+          historique irrécupérable, même avec le code de récupération.
+          Un bilan PDF conservé séparément reste une copie de lecture ;
+          il ne permet pas de réimporter l’historique dans BADDIES.
+        </p>
+        <p>
+          Vous pouvez supprimer une évaluation depuis l’application après
+          déverrouillage. La suppression du compte, depuis les paramètres,
+          prévoit aussi l’effacement de ses évaluations locales sur cet appareil.
+          Elle ne supprime pas les évaluations sans compte, les copies sur
+          d’autres appareils, les PDF téléchargés ou les résumés déjà partagés.
+          En cas d’échec du nettoyage local, effacez les données du site
+          dans les réglages du navigateur.
+        </p>
+        <h3>Préférences, contact d’urgence et session</h3>
+        <p>
+          Les préférences, consentements, informations de profil, jetons de
+          session et coordonnées du contact d’urgence ne sont pas protégés
+          par le chiffrement de l’historique. Ils sont conservés séparément
+          dans le navigateur. Le contact d’urgence peut être supprimé dans
+          les paramètres. La déconnexion retire les informations locales
+          de session, mais ne supprime pas à elle seule l’historique ou
+          toutes les préférences.
         </p>
 
         <h3>Statistiques Google Analytics</h3>
@@ -368,8 +414,11 @@ export default function Privacy() {
         <p>
           Dans les paramètres, un bouton permet de retirer votre consentement
           aux données de santé. Cette action supprime la trace locale de votre
-          accord. Elle ne supprime pas automatiquement les évaluations déjà
-          enregistrées. Pour demander l'effacement des données du compte ou
+          accord et empêche la poursuite des fonctionnalités qui le nécessitent
+          sans nouvel accord. Elle ne supprime pas automatiquement les évaluations
+          enregistrées. Pour les effacer, utilisez les fonctions de suppression
+          après déverrouillage ou effacez les données du site dans le navigateur.
+          Pour demander l'effacement des données du compte ou
           exercer vos droits, utilisez le contact indiqué dans la section 9.
         </p>
         <p>
@@ -402,6 +451,13 @@ export default function Privacy() {
         </p>
 
         <h2>9. Exercice des droits</h2>
+        <p>
+          L’éditrice ne dispose pas d’un accès à votre historique local ni
+          des secrets permettant de le déchiffrer. Pour une demande relative
+          à l’historique, n’envoyez pas votre mot de passe ou votre code de
+          récupération par e-mail. Les données de compte peuvent être modifiées
+          ou supprimées depuis les paramètres.
+        </p>
         <p>
           Pour exercer leurs droits, les utilisateurs
           peuvent envoyer une demande à :

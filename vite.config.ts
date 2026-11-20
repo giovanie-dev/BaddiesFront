@@ -10,6 +10,7 @@ export default defineConfig({
 // généeration de service worker
     VitePWA({
       registerType: 'autoUpdate',
+      // icônes dans les ressources mises en cache
       includeAssets: ['icon-192.png', 'icon-512.png'],
 
       manifest: {

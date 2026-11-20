@@ -19,6 +19,7 @@ export default function ZoneP() {
 
             <main className="bodyZone">
                 <Link to="/analyse" className="retour" aria-label="Retour à l'étape précédente">
+              
                     <ChevronLeft size={22} strokeWidth={1.8} aria-hidden="true" />
                 </Link>
 
@@ -28,15 +29,18 @@ export default function ZoneP() {
                 {!isPosterior ? (
                     <>
                         <AnteriorPain />
-
+                    
                         <button type="button"
                             onClick={() =>
                                 setIsPosterior(true)
                             }
                             className="btn-retour-face" aria-label="Afficher le dos de la silhouette"
-                        >
-                            <RotateCcw size={22} strokeWidth={1.8} aria-hidden="true" />
+                        >  
+                                 <RotateCcw size={22} strokeWidth={1.8} aria-hidden="true" />
+                                 
+                        
                         </button>
+                        <p className="LegendIcon">Voir vu de dos</p>
                     </>
                 ) : (
                     <>
@@ -50,6 +54,7 @@ export default function ZoneP() {
                         >
                             <RotateCcw size={22} strokeWidth={1.8} aria-hidden="true" />
                         </button>
+                        <p className="LegendIcon">Voir vu de face</p>
                     </>
                 )}
             </main>

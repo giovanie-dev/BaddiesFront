@@ -50,15 +50,6 @@ export default function Register() {
             const session = await apiService.login(email, password, controller.signal);
             localStorage.setItem("user", JSON.stringify(session.user));
 
-            try {
-                const history = JSON.parse(localStorage.getItem("historique") ?? "[]");
-                if (Array.isArray(history) && history.length > 0) {
-                    sessionStorage.setItem("propose-history-sync", "true");
-                }
-            } catch {
-                // Un historique illisible ne bloque pas l'accès au compte.
-            }
-
             navigate("/Home", { replace: true });
         } catch (err) {
             if (err instanceof Error && err.name !== "AbortError") {

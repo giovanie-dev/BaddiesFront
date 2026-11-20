@@ -6,7 +6,7 @@
   gap: 20px;
   width: 100%;
   margin-bottom: 30px;
-  border-bottom: 1px solid var(--color-tracking-border);
+   border-bottom: 1px solid var(--color-tracking-border);
 
   .btn-fond {
     position: relative;
@@ -170,4 +170,81 @@
       outline: 2px solid var(--color-btn);
     }
   }
+}
+
+.tracking { 
+  color: var(--color-text);
+   font-family: var(--font-body); 
+}
+
+.tracking-simple {
+  padding-bottom: 40px;
+  .history-vault-panel {
+     width: 100%; 
+     max-width: none; 
+     margin-bottom: 28px; 
+  }
+  .history-vault-panel--compact h2 {
+     font-size: 13px; 
+     margin-bottom: 2px; 
+  }
+  .btnSuivi .btn-fond { 
+    text-align: left; 
+    min-height: 50px; 
+    padding-bottom: 18px; 
+    border-radius: 0; 
+  }
+
+
+  .tracking-simple-history {
+     margin-top: 0; 
+  }
+  .tracking-simple-error { 
+    display: grid; 
+    gap: 14px; 
+    justify-items: start; 
+  }
+
+  .btnEpisode { 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 42px; 
+    color: var(--color-text); 
+    text-decoration: none; 
+    font-size: 14px; 
+  }
+
+  button:focus-visible, 
+  a:focus-visible, 
+  select:focus-visible 
+  { outline: 2px solid var(--color-accent); 
+    outline-offset: 3px; 
+  }
+  .historyArticle { 
+    align-items: end; 
+  }
+}
+
+
+@media (max-width: 600px) {
+  .tracking .historyArticle .blocHistory { flex-wrap: wrap; gap: 8px; }
+  .tracking .historyArticle .blocHistory .date { white-space: normal; }
+  .tracking .historyArticle { grid-template-columns: minmax(0, 1fr); }
+  .tracking .historyArticle .btnEpisode { justify-self: end; }
+  .filtreArt { gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .historyFilters { margin-bottom: 0; }
+}
+
+.tracking-overview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 24px;
+  margin: 0 0 28px;
+  color: var(--color-text-muted);
+  p { margin: 0; font-size: 14px; line-height: 1.7; }
+  strong { color: var(--color-accent); font-weight: 700; }
+  a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
 }

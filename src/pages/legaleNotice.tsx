@@ -7,7 +7,7 @@ export default function Notice() {
       <Navbar />
       <main className="legal-page">
         <h1>MENTIONS LÉGALES</h1>
-        <p>En vigueur au  <span className="date">22/10/2026</span></p>
+        <p>En vigueur au  <span className="date">18/11/2026</span></p>
 
 
         <p> Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la Confiance en l’économie numérique, il est porté à la connaissance des utilisateurs et visiteurs, ci-après l'<span>"Utilisateur"</span> , du site https://baddies-beryl.vercel.app , ci-après le <span> "Site"</span>, les présentes mentions légales.</p>
@@ -33,7 +33,8 @@ export default function Notice() {
 
         <h3>Hébergeur du backend</h3>
         <p>
-          L'API de BADDIES est hébergée par Render.
+          L’API de BADDIES, consacrée aux comptes, à l’authentification et
+          aux profils, est hébergée par Render.
         </p>
         <p>
           Site web : <a href="https://render.com">render.com</a>
@@ -41,8 +42,9 @@ export default function Notice() {
 
         <h3>Hébergeur de la base de données</h3>
         <p>
-          La base de données PostgreSQL de BADDIES
-          est hébergée par Supabase.
+          La base PostgreSQL des comptes BADDIES est hébergée par Supabase.
+          Dans cette version, les dates d’évaluation, réponses et solutions
+          ne sont pas envoyées à cette base.
         </p>
         <p>
           Site web : <a href="https://supabase.com">supabase.com</a>
@@ -85,6 +87,13 @@ export default function Notice() {
             CNIL
           </a>.
         </p>
+        <p>
+          L’historique sauvegardé est chiffré dans le navigateur, sans
+          synchronisation avec le compte. Son mot de passe local et son code
+          de récupération ne sont pas transmis aux prestataires du compte.
+          Les limites de cette protection et les modalités de suppression
+          sont détaillées dans la politique de confidentialité.
+        </p>
         <h2>PROPRIÉTÉ INTELLECTUELLE</h2>
 
         <p>
@@ -96,7 +105,6 @@ export default function Notice() {
           des exceptions légales et des licences applicables.
         </p>
         <br />
-        <p>Rédigé sur http://legalplace.fr</p>
         <Link to="/Setting" className="btn">Fermer</Link>
 
       </main>

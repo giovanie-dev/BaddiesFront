@@ -43,7 +43,7 @@ export default function SessionExpiredModal() {
     if (!isOpen) return null
 
     return (
-        <div className="session-overlay">
+        <div className="session-overlay" onClick={event => { if (event.target === event.currentTarget) setIsOpen(false); }}>
             <section className="session-modal" role="alertdialog" aria-modal="true" aria-labelledby="session-title" aria-describedby="session-description">
 
                 <h2 id="session-title">

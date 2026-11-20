@@ -9,12 +9,16 @@
 }
 
 html {
+  overscroll-behavior: none;
+  overflow-x: clip;
   background: var(--color-bg);
   color-scheme: light;
 }
 
 body {
   min-height: 100vh;
+  min-height: 100svh;
+  overscroll-behavior-y: none;
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -446,3 +450,6 @@ button {
     transform: translateX(0);
   }
 }
+
+// Le document garde son fond et évite le rebond aux extrémités du défilement.
+#root { min-height: 100svh; }

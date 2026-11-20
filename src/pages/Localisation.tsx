@@ -23,7 +23,8 @@ export default function Localisation() {
     const contextes: Contexte[] = db.contextes;
 
     const handleContinue = () => {
-        if (!evaluation.contextes) return;
+        if (!evaluation.contextes) 
+            return;
         navigate("/Recapitulatif");
     };
 

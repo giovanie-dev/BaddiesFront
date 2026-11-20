@@ -1,3 +1,4 @@
+import { deleteAccountEvaluations, getHistoryVaultStatus, ensureHistoryUnlocked, lockHistory } from "../services/indexedDbService";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, UserRound, ChevronRight, Globe, HeartPulse, UserRoundCheck, Pencil, Plus, ShieldCheck, LogOut } from "lucide-react";
@@ -90,7 +91,7 @@ function getStoredContact(): EmergencyContact {
 function Delete({ onAccept, onRefuse }: DeleteProps) {
 
   return (
-    <div id="delete-overlay">
+    <div id="delete-overlay" onClick={event => { if (event.target === event.currentTarget) onRefuse(); }}>
       <div className="delete-card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
         <h2 id="delete-title">Supprimer le contact ?</h2>
 
@@ -150,7 +151,14 @@ export default function Settings({ embedded = false, onClose }: SettingsProps) {
     setDeleteAccountError("");
 
     try {
+      // Déverrouiller avant de supprimer le compte afin de pouvoir effacer ses épisodes locaux.
+      if (await getHistoryVaultStatus() !== "empty") await ensureHistoryUnlocked();
       await apiService.deleteAccount(deletePassword);
+      try {
+        await deleteAccountEvaluations();
+      } catch {
+        window.alert("Compte supprimé. Le stockage local n’a pas pu être effacé : supprimez les données du site dans les réglages du navigateur sur cet appareil.");
+      }
     } catch (error) {
       setDeleteAccountError(
         error instanceof Error
@@ -166,6 +174,7 @@ export default function Settings({ embedded = false, onClose }: SettingsProps) {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("login");
+    lockHistory();
 
     setDeletePassword("");
     setUser(null);
@@ -463,6 +472,12 @@ export default function Settings({ embedded = false, onClose }: SettingsProps) {
                 {hasConsent ? " Consentement actif" : " Non autorisé"}
               </p>
 
+              <p>
+                Retirer cet accord ne supprime pas les évaluations déjà
+                sauvegardées. Pour les effacer, déverrouillez l’historique
+                et supprimez-les, ou effacez les données du site dans le navigateur.
+                Cette dernière action efface aussi les préférences locales.
+              </p>
               {hasConsent && (
                 <button type="button" className="settings-secondary-btn" onClick={handleDeleteConsent}>
                   Retirer mon consentement de santé
@@ -520,16 +535,21 @@ export default function Settings({ embedded = false, onClose }: SettingsProps) {
 
       </Container>
       {canConnect && user && showDeleteAccount && (
-        <div id="delete-overlay">
+        <div id="delete-overlay" onClick={event => {
+          if (event.target === event.currentTarget && !deletingAccount) {
+            setShowDeleteAccount(false); setDeletePassword(""); setDeleteAccountError("");
+          }
+        }}>
           <div className="delete-card" role="dialog" aria-modal="true" aria-labelledby="delete-account-title" aria-describedby="delete-account-description" aria-busy={deletingAccount}>
             <h2 id="delete-account-title">
               Supprimer votre compte ?
             </h2>
 
             <p id="delete-account-description">
-              Votre compte et ses évaluations enregistrées en ligne
-              seront supprimés définitivement. Les évaluations locales
-              et les fichiers téléchargés resteront sur votre appareil.
+              Votre compte sera supprimé définitivement, ainsi que les évaluations
+              locales associées à ce compte sur cet appareil. Les évaluations
+              sans compte, les copies sur d’autres appareils et les fichiers
+              téléchargés ne sont pas effacés par cette action.
             </p>
 
             <form onSubmit={handleDeleteAccount} className="settings-contact-form">

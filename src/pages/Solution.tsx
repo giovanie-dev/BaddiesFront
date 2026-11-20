@@ -4,9 +4,8 @@ import "../styles/pages/solution.scss";
 import db from "../data/db.json";
 import { useEvaluation } from "../evaluation/useEvaluation";
 import { Link } from "react-router-dom";
-import { saveEvaluation } from "../services/localStorageService";
+import { saveEvaluation } from "../services/indexedDbService";
 import { useState } from "react";
-import { createHistory } from "../services/historyService";
 import { downloadEvaluationPDF } from "../services/pdfService";
 import { ChevronLeft } from "lucide-react";
 import { Share2 } from "lucide-react";
@@ -47,6 +46,7 @@ const imagesSolutions: Record<string, string> = {
 export default function Solution() {
     const { evaluation } = useEvaluation();
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
 
     // Pour voir si la solution correspond aux réponses renseignées
@@ -115,48 +115,15 @@ export default function Solution() {
 
     // Enregistrer l'épisode
     const handleSave = async () => {
-        if (saved) return;
-
-        console.log("État en ligne :", navigator.onLine);
-
-        const token = localStorage.getItem("token");
-
+        if (saved || saving) return;
+        setSaving(true);
         try {
-            if (token && navigator.onLine) {
-                await createHistory(evaluation, solutionsFiltre);
-                setMessage("Enregistré sur ton compte.");
-            } else {
-                saveEvaluation(evaluation, solutionsFiltre);
-                setMessage("Enregistré sur cet appareil.");
-            }
-
+            await saveEvaluation(evaluation, solutionsFiltre);
             setSaved(true);
+            setMessage(" Evaluation enregistré avec succès");
         } catch (error) {
-            console.error("Échec de sauvegarde API History :", error)
-
-            try {
-                saveEvaluation(evaluation, solutionsFiltre)
-                setSaved(true)
-
-                if (
-                    error instanceof Error &&
-                    error.message ===
-                    "Session expirée. Veuillez vous reconnecter."
-                ) {
-                    setMessage(
-                        "Session expirée. Veuillez vous reconnecter. " +
-                        "Votre évaluation a été conservée sur cet appareil."
-                    )
-                } else {
-                    setMessage(
-                        "Enregistrement sur le compte impossible. " +
-                        "Votre évaluation a été conservée sur cet appareil."
-                    )
-                }
-            } catch {
-                setMessage("Impossible d'enregistrer. Réessaie.")
-            }
-        }
+            setMessage(error instanceof Error ? error.message : "Impossible d’enregistrer sur cet appareil. Réessaie.");
+        } finally { setSaving(false); }
     };
 
 
@@ -217,7 +184,7 @@ export default function Solution() {
                         <CheckCircle2 size={18} />{message}</p>}
                     <div className="btnSolution">
 
-                        <button type="button" className="btn" onClick={handleSave} disabled={saved}>
+                        <button type="button" className="btn" onClick={handleSave} disabled={saved || saving}>
                             {saved
                                 ? "Épisode enregistré"
                                 : "+ Enregistrer"}
